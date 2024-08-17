@@ -1,13 +1,11 @@
-local ImGui = loadstring(game:HttpGet('https://github.com/depthso/Roblox-ImGUI/raw/main/ImGui.lua'))()
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local Window = ImGui:CreateWindow({
-    Title = "Emote Player",
-    Size = UDim2.new(0, 300, 0, 200),
-    Position = UDim2.new(0.5, 0, 0.5, 0)
-})
+local Window = OrionLib:MakeWindow({Name = "RR Emote Unlocker", HidePremium = false, SaveConfig = true, ConfigFolder = "EmotePlayerConfig"})
 
-local EmoteTab = Window:CreateTab({
-    Name = "Emotes"
+local EmoteTab = Window:MakeTab({
+    Name = "Emotes",
+    Icon = "rbxassetid://",
+    PremiumOnly = false
 })
 
 local EmoteNames = {}
@@ -36,38 +34,21 @@ end
 
 LoadConfig()
 
-EmoteTab:Combo({
-    Label = "Select Emote",
-    Items = EmoteNames,
-    Callback = function(_, Value)
+EmoteTab:AddDropdown({
+    Name = "Select Emote",
+    Default = SelectedEmote,
+    Options = EmoteNames,
+    Callback = function(Value)
         SelectedEmote = Value
-    end
+    end    
 })
 
-EmoteTab:Checkbox({
-    Label = "Loop Emotes",
-    Value = false,
-    Callback = function(_, Value)
+EmoteTab:AddToggle({
+    Name = "Loop Emotes",
+    Default = false,
+    Callback = function(Value)
         LoopEmotes = Value
-    end
-})
-
-EmoteTab:Button({
-    Text = "Favorite Current Emote",
-    Callback = function()
-        if not table.find(FavoriteEmotes, SelectedEmote) then
-            table.insert(FavoriteEmotes, SelectedEmote)
-            SaveConfig()
-        end
-    end
-})
-
-EmoteTab:Combo({
-    Label = "Favorite Emotes",
-    Items = FavoriteEmotes,
-    Callback = function(_, Value)
-        SelectedEmote = Value
-    end
+    end    
 })
 
 local function PlayEmote()
@@ -90,8 +71,8 @@ local function WaitForEmoteToFinish()
     end
 end
 
-EmoteTab:Button({
-    Text = "Play Emote",
+EmoteTab:AddButton({
+    Name = "Play Emote",
     Callback = function()
         if LoopEmotes then
             while LoopEmotes do
@@ -101,15 +82,7 @@ EmoteTab:Button({
         else
             PlayEmote()
         end
-    end
+    end    
 })
 
-EmoteTab:Button({
-    Text = "Play Favorite Emote",
-    Callback = function()
-        if #FavoriteEmotes > 0 then
-            SelectedEmote = FavoriteEmotes[math.random(1, #FavoriteEmotes)]
-            PlayEmote()
-        end
-    end
-})
+OrionLib:Init()
